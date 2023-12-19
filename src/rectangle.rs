@@ -44,3 +44,20 @@ impl fmt::Display for Rectangle {
         write!(f, "{}", rect)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::rectangle as rect;
+
+    #[test]
+    fn test_display() {
+        let r = rect::Rectangle {
+            x: 2, y: 2, width: 3, height: 3
+        };
+        const ESC: &str = "\u{001B}";
+        assert_eq!(
+            format!("{}", r),
+            format!("{ESC}[2;2H\u{250F}\u{2501}\u{2513}{ESC}[3;2H\u{2503}{ESC}[3;4H\u{2503}{ESC}[4;2H\u{2517}\u{2501}\u{251B}")
+        )
+    }
+}

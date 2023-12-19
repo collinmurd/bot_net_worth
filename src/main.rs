@@ -7,7 +7,7 @@ use std::io::{Write, stdout, stdin};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
-use termion::{clear, color, cursor};
+use termion::{clear, cursor};
 
 mod rectangle;
 
