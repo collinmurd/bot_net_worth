@@ -2,10 +2,8 @@
 extern crate termion;
 
 use core::fmt;
-use std::io::{Write, stdout, stdin};
+use std::io::{Read, Write, stdout};
 
-use termion::event::Key;
-use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
@@ -24,15 +22,19 @@ fn main() {
     write!(stdout, "{}{}", clear::All, header_box).unwrap();
     stdout.flush().unwrap();
 
-    let stdin = stdin();
-    for key in stdin.keys() {
-        match key.unwrap() {
-            Key::Ctrl(c) => match c {
-                'c' => break,
-                _ => ()
-            }
-            _ => {}
+    let mut stdin = termion::async_stdin().bytes();
+    loop {
+        match stdin.next(){
+            Some(b) => {
+
+                match b.as_ref().unwrap() { // not sure why the byte queue needs Result for the possibility of an error...
+                    b'q' => break,
+                    _ => write!(stdout, "{}{}", cursor::Goto(1,1), b.unwrap()).unwrap()
+                }
+            },
+            None => ()
         }
+        stdout.flush().unwrap();
     }
 
     // exit
