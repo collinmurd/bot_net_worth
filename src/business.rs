@@ -4,10 +4,21 @@ use std::time::Duration;
 
 use termion::cursor;
 
+const BAR_BLOCKS: [&str; 8] = [
+    "\u{258F}", // ▏
+    "\u{258E}", // ▎
+    "\u{258D}", // ▍
+    "\u{258C}", // ▌
+    "\u{258B}", // ▋
+    "\u{258A}", // ▊
+    "\u{2589}", // ▉
+    "\u{2588}", // █
+];
+
 pub struct Business {
     pub name: String,
     sale_time: Duration,
-    sale_progress: Duration,
+    pub sale_progress: Duration,
     sale_amount: f64
 }
 
@@ -27,18 +38,29 @@ impl Business {
     pub fn progress(&mut self, time: Duration) -> Option<f64> {
         self.sale_progress += time;
         if self.sale_progress > self.sale_time {
-            self.sale_time = Duration::ZERO;
             self.sale_progress = Duration::ZERO;
             return Some(self.sale_amount);
         }
 
         return None;
     }
+
+    fn progress_bar(&self) -> String {
+        if self.sale_progress.is_zero() {
+            return String::new();
+        }
+        BAR_BLOCKS[7].repeat(((self.sale_progress.as_secs_f32() / self.sale_time.as_secs_f32()) * 20.0).round() as usize)
+    }
 }
 
 impl fmt::Display for Business {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}\n{}[{:<10}]", self.name, cursor::Left(self.name.len().try_into().unwrap()), "||")
+        write!(f, "{}\n{}[{:<20}]{}",
+            self.name,
+            cursor::Left(self.name.len().try_into().unwrap()),
+            self.progress_bar(),
+            self.sale_progress.as_secs()
+        )
     }
 }
 

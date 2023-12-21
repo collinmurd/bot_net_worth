@@ -19,6 +19,7 @@ use crate::shapes::{rectangle, text};
 
 const GAME_WIDTH: u16 = 100;
 const GAME_HEIGHT: u16 = 25;
+const FPS: u16 = 30;
 
 fn main() {
 
@@ -53,13 +54,19 @@ fn main() {
             None => ()
         }
 
-        account.earn(0.01);
-        write!(stdout, "{}", account).unwrap();
         stdout.flush().unwrap();
 
-        thread::sleep(time::Duration::from_millis(1000 / 30));
+        business.progress(Duration::from_secs_f32(1.0 / FPS as f32));
+        write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
+        stdout.flush().unwrap();
+
+        thread::sleep(time::Duration::from_secs_f32(1.0 / FPS as f32));
     }
 
     // exit
     write!(stdout, "{}{}", clear::All, cursor::Goto(1, 1)).unwrap();
+}
+
+fn log(stdout: &mut RawTerminal<Stdout>, log: String) {
+    write!(stdout, "{}{}", cursor::Goto(1, 27), log).unwrap();
 }
