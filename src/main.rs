@@ -3,6 +3,7 @@ extern crate termion;
 
 use std::fmt::Display;
 use std::io::{Read, Write, stdout, Stdout};
+use std::time::Duration;
 use std::{thread, time};
 
 use termion::raw::{IntoRawMode, RawTerminal};
@@ -12,8 +13,9 @@ mod account;
 mod business;
 mod shapes;
 
-use crate::shapes::{rectangle, text};
 use crate::account::Account;
+use crate::business::Business;
+use crate::shapes::{rectangle, text};
 
 const GAME_WIDTH: u16 = 100;
 const GAME_HEIGHT: u16 = 25;
@@ -27,8 +29,14 @@ fn main() {
     let game_border = rectangle::Rectangle {x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT};
     let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
     let mut account = Account::new(3, 4);
+    let mut business = Business::new(
+        "Crypto Mining".to_string(),
+        Duration::from_secs(5),
+        12.3
+    );
 
     write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
+    write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
     stdout.flush().unwrap();
 
     // game loop

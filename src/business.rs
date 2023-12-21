@@ -2,6 +2,8 @@
 use std::fmt;
 use std::time::Duration;
 
+use termion::cursor;
+
 pub struct Business {
     pub name: String,
     sale_time: Duration,
@@ -36,7 +38,7 @@ impl Business {
 
 impl fmt::Display for Business {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}\n[{:<10}]", self.name, "||")
+        write!(f, "{}\n{}[{:<10}]", self.name, cursor::Left(self.name.len().try_into().unwrap()), "||")
     }
 }
 
