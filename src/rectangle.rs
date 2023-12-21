@@ -4,8 +4,6 @@ use termion::cursor;
 
 use crate::line::{Line, LineOrientation};
 
-const BOX_HORIZONTAL: &str = "\u{2501}";
-const BOX_VERTICAL: &str = "\u{2503}";
 const BOX_TOP_LEFT_CORNER: &str = "\u{250F}";
 const BOX_TOP_RIGHT_CORNER: &str = "\u{2513}";
 const BOX_BOTTOM_LEFT_CORNER: &str = "\u{2517}";
