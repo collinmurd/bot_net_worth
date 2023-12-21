@@ -32,7 +32,7 @@ fn main() {
     let mut account = Account::new(3, 4);
     let mut business = Business::new(
         "Crypto Mining".to_string(),
-        Duration::from_secs(5),
+        Duration::from_secs(60 * 5),
         12.3
     );
 

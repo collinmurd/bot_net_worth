@@ -49,17 +49,27 @@ impl Business {
         if self.sale_progress.is_zero() {
             return String::new();
         }
-        BAR_BLOCKS[7].repeat(((self.sale_progress.as_secs_f32() / self.sale_time.as_secs_f32()) * 20.0).round() as usize)
+        let value = self.sale_progress.as_secs_f32() / self.sale_time.as_secs_f32();
+        let full_blocks = (value * 20.0) as usize;
+        let partial_block = BAR_BLOCKS[((value * 20.0 - full_blocks as f32) * 8.0).round() as usize];
+        (BAR_BLOCKS[7].repeat(full_blocks) + partial_block).to_string()
     }
 }
 
 impl fmt::Display for Business {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let remaining = (self.sale_time - self.sale_progress).as_secs();
+        let timer = format!("{:0>2}:{:0>2}:{:0>2}",
+            remaining / 3600,
+            (remaining - (remaining / 3600 * 3600)) / 60,
+            remaining % 60
+        );
+
         write!(f, "{}\n{}[{:<20}]{}",
             self.name,
             cursor::Left(self.name.len().try_into().unwrap()),
             self.progress_bar(),
-            self.sale_progress.as_secs()
+            timer
         )
     }
 }
