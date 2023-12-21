@@ -1,14 +1,16 @@
 
 extern crate termion;
 
-use std::io::{Read, Write, stdout};
+use std::fmt::Display;
+use std::io::{Read, Write, stdout, Stdout};
 use std::{thread, time};
 
-use termion::raw::IntoRawMode;
+use termion::raw::{IntoRawMode, RawTerminal};
 use termion::{clear, cursor};
 
-mod shapes;
 mod account;
+mod business;
+mod shapes;
 
 use crate::shapes::{rectangle, text};
 use crate::account::Account;
@@ -22,10 +24,7 @@ fn main() {
     let mut stdout = stdout().into_raw_mode().unwrap();
     write!(stdout, "{}", cursor::Hide).unwrap();
 
-    let game_border = rectangle::Rectangle {
-        x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT
-    };
-
+    let game_border = rectangle::Rectangle {x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT};
     let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
     let mut account = Account::new(3, 4);
 
@@ -45,6 +44,9 @@ fn main() {
             },
             None => ()
         }
+
+        account.earn(0.01);
+        write!(stdout, "{}", account).unwrap();
         stdout.flush().unwrap();
 
         thread::sleep(time::Duration::from_millis(1000 / 30));

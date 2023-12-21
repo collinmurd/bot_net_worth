@@ -1,5 +1,5 @@
 
-use core::fmt;
+use std::fmt;
 use termion::cursor;
 
 const BOX_HORIZONTAL: &str = "\u{2501}";
