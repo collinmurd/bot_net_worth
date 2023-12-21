@@ -7,8 +7,9 @@ use std::io::{Read, Write, stdout};
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
-mod rectangle;
 mod line;
+mod rectangle;
+mod text;
 
 const GAME_WIDTH: u16 = 100;
 const GAME_HEIGHT: u16 = 25;
@@ -23,11 +24,7 @@ fn main() {
         x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT
     };
 
-    let header_box = rectangle::Rectangle {
-        x: 3, y: 3, width: GAME_WIDTH - 2, height: 5
-    };
-
-    write!(stdout, "{}{}{}", clear::All, game_border, header_box).unwrap();
+    write!(stdout, "{}{}", clear::All, game_border).unwrap();
     stdout.flush().unwrap();
 
     let mut stdin = termion::async_stdin().bytes();
