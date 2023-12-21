@@ -24,7 +24,9 @@ fn main() {
         x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT
     };
 
-    write!(stdout, "{}{}", clear::All, game_border).unwrap();
+    let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
+
+    write!(stdout, "{}{}{}", clear::All, game_border, title).unwrap();
     stdout.flush().unwrap();
 
     let mut stdin = termion::async_stdin().bytes();
