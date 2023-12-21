@@ -1,12 +1,11 @@
 
 extern crate termion;
 
-use std::fmt::Display;
-use std::io::{Read, Write, stdout, Stdout};
+use std::io::{Read, Write, stdout};
 use std::time::Duration;
 use std::{thread, time};
 
-use termion::raw::{IntoRawMode, RawTerminal};
+use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
 mod account;
@@ -58,7 +57,7 @@ fn main() {
 
         if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
             account.earn(amount);
-            write!(stdout, "{}", account);
+            write!(stdout, "{}", account).unwrap();
         }
 
         write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
@@ -69,8 +68,4 @@ fn main() {
 
     // exit
     write!(stdout, "{}{}", clear::All, cursor::Goto(1, 1)).unwrap();
-}
-
-fn log(stdout: &mut RawTerminal<Stdout>, log: String) {
-    write!(stdout, "{}{}", cursor::Goto(1, 27), log).unwrap();
 }
