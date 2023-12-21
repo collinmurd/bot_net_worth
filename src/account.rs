@@ -1,17 +1,30 @@
 
+use core::fmt;
+use termion::cursor;
+
 pub struct Account {
+    pub x: u16,
+    pub y: u16,
     cash: f64
 }
 
 impl Account {
-    fn new() {
-        Account { cash: 0 }
+    pub fn new(x: u16, y: u16) -> Account {
+        Account { x, y, cash: 0.0 }
+    }
+
+    pub fn earn(&mut self, amount: f64) {
+        self.cash += amount;
+    }
+
+    pub fn spend(&mut self, amount: f64) {
+        self.cash -= amount;
     }
 }
 
 impl fmt::Display for Account {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:.2}", self.cash)
+        write!(f, "{}Cash on hand: ${:.2}", cursor::Goto(self.x, self.y), self.cash)
     }
 }
