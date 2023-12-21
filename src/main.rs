@@ -8,6 +8,10 @@ use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
 mod rectangle;
+mod line;
+
+const GAME_WIDTH: u16 = 100;
+const GAME_HEIGHT: u16 = 25;
 
 fn main() {
 
@@ -15,11 +19,15 @@ fn main() {
     let mut stdout = stdout().into_raw_mode().unwrap();
     write!(stdout, "{}", cursor::Hide).unwrap();
 
-    let header_box = rectangle::Rectangle {
-        x: 10, y: 10, width: 20, height: 10
+    let game_border = rectangle::Rectangle {
+        x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT
     };
 
-    write!(stdout, "{}{}", clear::All, header_box).unwrap();
+    let header_box = rectangle::Rectangle {
+        x: 3, y: 3, width: GAME_WIDTH - 2, height: 5
+    };
+
+    write!(stdout, "{}{}{}", clear::All, game_border, header_box).unwrap();
     stdout.flush().unwrap();
 
     let mut stdin = termion::async_stdin().bytes();
