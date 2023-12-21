@@ -2,7 +2,7 @@
 use core::fmt;
 use termion::cursor;
 
-use crate::line::{Line, LineOrientation};
+use crate::shapes::line::{Line, LineOrientation};
 
 const BOX_TOP_LEFT_CORNER: &str = "\u{250F}";
 const BOX_TOP_RIGHT_CORNER: &str = "\u{2513}";
@@ -39,7 +39,7 @@ impl fmt::Display for Rectangle {
 
 #[cfg(test)]
 mod test {
-    use crate::rectangle as rect;
+    use crate::shapes::rectangle as rect;
 
     #[test]
     fn test_display() {

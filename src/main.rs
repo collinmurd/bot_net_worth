@@ -7,9 +7,9 @@ use std::io::{Read, Write, stdout};
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
-mod line;
-mod rectangle;
-mod text;
+mod shapes;
+
+use crate::shapes::{rectangle, text};
 
 const GAME_WIDTH: u16 = 100;
 const GAME_HEIGHT: u16 = 25;

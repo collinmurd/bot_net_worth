@@ -17,7 +17,7 @@ impl fmt::Display for Text {
 
 #[cfg(test)]
 mod test {
-    use crate::text::Text;
+    use crate::shapes::text::Text;
 
     const ESC: &str = "\u{001B}";
 

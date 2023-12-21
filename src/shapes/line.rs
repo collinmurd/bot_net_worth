@@ -40,9 +40,9 @@ impl fmt::Display for Line {
 
 #[cfg(test)]
 mod test {
-    use crate::line::{Line, LineOrientation};
-    use crate::line::BOX_HORIZONTAL;
-    use crate::line::BOX_VERTICAL;
+    use crate::shapes::line::{Line, LineOrientation};
+    use crate::shapes::line::BOX_HORIZONTAL;
+    use crate::shapes::line::BOX_VERTICAL;
 
     const ESC: &str = "\u{001B}";
 
