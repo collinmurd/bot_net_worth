@@ -51,7 +51,7 @@ impl Business {
         }
         let value = self.sale_progress.as_secs_f32() / self.sale_time.as_secs_f32();
         let full_blocks = (value * 20.0) as usize;
-        let partial_block = BAR_BLOCKS[((value * 20.0 - full_blocks as f32) * 8.0).round() as usize];
+        let partial_block = BAR_BLOCKS[((value * 20.0 - full_blocks as f32) * 8.0) as usize];
         (BAR_BLOCKS[7].repeat(full_blocks) + partial_block).to_string()
     }
 }

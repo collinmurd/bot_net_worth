@@ -32,7 +32,7 @@ fn main() {
     let mut account = Account::new(3, 4);
     let mut business = Business::new(
         "Crypto Mining".to_string(),
-        Duration::from_secs(60 * 5),
+        Duration::from_secs(30),
         12.3
     );
 
@@ -56,7 +56,11 @@ fn main() {
 
         stdout.flush().unwrap();
 
-        business.progress(Duration::from_secs_f32(1.0 / FPS as f32));
+        if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
+            account.earn(amount);
+            write!(stdout, "{}", account);
+        }
+
         write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
         stdout.flush().unwrap();
 
