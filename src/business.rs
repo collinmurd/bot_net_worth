@@ -66,10 +66,9 @@ impl fmt::Display for Business {
             remaining % 60
         );
 
-        write!(f, "{:<22}${:.2}\n{}[{:<20}]{}",
-            self.name,
-            self.sale_amount,
-            cursor::Left(27),
+        write!(f, "{:<30}\n{}[{:<20}]{}",
+            format!("{}  ${:.2}", self.name, self.sale_amount),
+            cursor::Left(30),
             self.progress_bar(),
             timer
         )
@@ -88,9 +87,9 @@ impl fmt::Display for BusinessContainer {
         let mut display = String::new();
         for (i, b) in self.businesses.iter().enumerate() {
             if i % 2 == 0 {
-                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2) as u16 + 1), b).as_str();
+                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2 * 4) as u16 + 1), b).as_str();
             } else {
-                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2) as u16 + 1), b).as_str();
+                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2 * 4) as u16 + 1), b).as_str();
             }
         }
 
