@@ -33,22 +33,24 @@ fn main() {
     let mut businesses = init_bussiness(4, 6);
 
     // game loop
-    let mut stdin = termion::async_stdin().bytes();
+    let mut stdin = termion::async_stdin();
     loop {
         // reset screen 
         write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
         write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
 
-        match stdin.next(){
+        let mut buf: Vec<u8> = Vec::new();
+        stdin.read_to_end(&mut buf).unwrap();
+        match buf.pop() {
             Some(b) => {
 
-                match b.as_ref().unwrap() { // not sure why the byte queue needs Result for the possibility of an error...
+                match b { // not sure why the byte queue needs Result for the possibility of an error...
                     b'q' => break,
                     65 => businesses.select_business(BusinessSelectDirection::Up),
                     67 => businesses.select_business(BusinessSelectDirection::Right),
                     66 => businesses.select_business(BusinessSelectDirection::Down),
                     68 => businesses.select_business(BusinessSelectDirection::Left),
-                    _ => write!(stdout, "{}{}", cursor::Goto(1,1), b.unwrap()).unwrap()
+                    _ => ()
                 }
             },
             None => ()
