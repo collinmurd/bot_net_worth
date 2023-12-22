@@ -30,7 +30,7 @@ fn main() {
     let game_border = rectangle::Rectangle {x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT};
     let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
     let mut account = Account::new(3, 4);
-    let mut businesses = init_bussiness(3, 6);
+    let mut businesses = init_bussiness(4, 6);
 
 
     write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();

@@ -18,9 +18,12 @@ const BAR_BLOCKS: [&str; 8] = [
 
 pub struct Business {
     pub name: String,
+
     sale_time: Duration,
-    pub sale_progress: Duration,
-    sale_amount: f64
+    sale_progress: Duration,
+    sale_amount: f64,
+
+    level: u16
 }
 
 impl Business {
@@ -32,11 +35,15 @@ impl Business {
             name,
             sale_time: init_sale_time,
             sale_progress: Duration::ZERO,
-            sale_amount: init_sale_amount
+            sale_amount: init_sale_amount,
+            level: 0
         }
     }
 
     pub fn progress(&mut self, time: Duration) -> Option<f64> {
+        if self.level < 1 {
+            return None;
+        }
         self.sale_progress += time;
         if self.sale_progress > self.sale_time {
             self.sale_progress = Duration::ZERO;
@@ -66,9 +73,12 @@ impl fmt::Display for Business {
             remaining % 60
         );
 
-        write!(f, "{:<30}\n{}[{:<20}]{}",
-            format!("{}  ${:.2}", self.name, self.sale_amount),
-            cursor::Left(30),
+        let level_line = format!("Level: {} Revenue: ${:.2}", self.level, self.sale_amount);
+        write!(f, "{}\n{}{}\n{}[{:<20}]{}",
+            self.name,
+            cursor::Left(self.name.len() as u16),
+            level_line,
+            cursor::Left(level_line.len() as u16),
             self.progress_bar(),
             timer
         )
@@ -87,9 +97,9 @@ impl fmt::Display for BusinessContainer {
         let mut display = String::new();
         for (i, b) in self.businesses.iter().enumerate() {
             if i % 2 == 0 {
-                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2 * 4) as u16 + 1), b).as_str();
+                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2 * 5) as u16 + 1), b).as_str();
             } else {
-                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2 * 4) as u16 + 1), b).as_str();
+                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2 * 5) as u16 + 1), b).as_str();
             }
         }
 
