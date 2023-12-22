@@ -74,8 +74,8 @@ fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
         x,
         y,
         businesses: vec! [
-            Business::new("Crypto Mining".to_string(), Duration::from_secs(30), 12.3),
-            Business::new("Selling RAM Online".to_string(), Duration::from_secs(10), 3.0),
+            Business::new("Crypto Mining".to_string(), Duration::from_secs(10), 0.05),
+            Business::new("Selling RAM Online".to_string(), Duration::from_secs(30), 3.0),
         ]
     }
 }

@@ -66,9 +66,10 @@ impl fmt::Display for Business {
             remaining % 60
         );
 
-        write!(f, "{}\n{}[{:<20}]{}",
+        write!(f, "{:<22}${:.2}\n{}[{:<20}]{}",
             self.name,
-            cursor::Left(self.name.len().try_into().unwrap()),
+            self.sale_amount,
+            cursor::Left(27),
             self.progress_bar(),
             timer
         )
