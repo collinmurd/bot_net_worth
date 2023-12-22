@@ -5,6 +5,7 @@ use std::io::{Read, Write, stdout};
 use std::time::Duration;
 use std::{thread, time};
 
+use business::BusinessContainer;
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
@@ -29,14 +30,11 @@ fn main() {
     let game_border = rectangle::Rectangle {x: 2, y: 2, width: GAME_WIDTH, height: GAME_HEIGHT};
     let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
     let mut account = Account::new(3, 4);
-    let mut business = Business::new(
-        "Crypto Mining".to_string(),
-        Duration::from_secs(30),
-        12.3
-    );
+    let mut businesses = init_bussiness(3, 6);
+
 
     write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
-    write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
+    write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
     stdout.flush().unwrap();
 
     // game loop
@@ -55,12 +53,13 @@ fn main() {
 
         stdout.flush().unwrap();
 
-        if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
-            account.earn(amount);
-            write!(stdout, "{}", account).unwrap();
+        for business in businesses.iter_mut() {
+            if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
+                account.earn(amount);
+                write!(stdout, "{}", account).unwrap();
+            }
         }
-
-        write!(stdout, "{}{}", cursor::Goto(3, 6), business).unwrap();
+        write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
         stdout.flush().unwrap();
 
         thread::sleep(time::Duration::from_secs_f32(1.0 / FPS as f32));
@@ -68,4 +67,15 @@ fn main() {
 
     // exit
     write!(stdout, "{}{}", clear::All, cursor::Goto(1, 1)).unwrap();
+}
+
+fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
+    BusinessContainer {
+        x,
+        y,
+        businesses: vec! [
+            Business::new("Crypto Mining".to_string(), Duration::from_secs(30), 12.3),
+            Business::new("Selling RAM Online".to_string(), Duration::from_secs(10), 3.0),
+        ]
+    }
 }

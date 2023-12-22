@@ -1,5 +1,6 @@
 
 use std::fmt;
+use std::slice::IterMut;
 use std::time::Duration;
 
 use termion::cursor;
@@ -73,6 +74,35 @@ impl fmt::Display for Business {
         )
     }
 }
+
+pub struct BusinessContainer {
+    pub x: u16,
+    pub y: u16,
+    pub businesses: Vec<Business>
+}
+
+
+impl fmt::Display for BusinessContainer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut display = String::new();
+        for (i, b) in self.businesses.iter().enumerate() {
+            if i % 2 == 0 {
+                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2) as u16 + 1), b).as_str();
+            } else {
+                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2) as u16 + 1), b).as_str();
+            }
+        }
+
+        write!(f, "{display}")
+    }
+}
+
+impl BusinessContainer {
+    pub fn iter_mut(&mut self) -> IterMut<'_, Business> {
+        self.businesses.iter_mut()
+    }
+}
+
 
 #[cfg(test)]
 mod test {
