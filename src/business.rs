@@ -5,6 +5,8 @@ use std::time::Duration;
 
 use termion::cursor;
 
+use crate::shapes::rectangle;
+
 const BAR_BLOCKS: [&str; 8] = [
     "\u{258F}", // ▏
     "\u{258E}", // ▎
@@ -15,6 +17,13 @@ const BAR_BLOCKS: [&str; 8] = [
     "\u{2589}", // ▉
     "\u{2588}", // █
 ];
+
+pub enum BusinessSelectDirection {
+    Up,
+    Right,
+    Left,
+    Down
+}
 
 pub struct Business {
     pub name: String,
@@ -36,7 +45,7 @@ impl Business {
             sale_time: init_sale_time,
             sale_progress: Duration::ZERO,
             sale_amount: init_sale_amount,
-            level: 0
+            level: 1
         }
     }
 
@@ -88,7 +97,9 @@ impl fmt::Display for Business {
 pub struct BusinessContainer {
     pub x: u16,
     pub y: u16,
-    pub businesses: Vec<Business>
+    pub businesses: Vec<Business>,
+
+    selected: Option<usize>
 }
 
 
@@ -96,10 +107,18 @@ impl fmt::Display for BusinessContainer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut display = String::new();
         for (i, b) in self.businesses.iter().enumerate() {
-            if i % 2 == 0 {
-                display += format!("{}{}", cursor::Goto(self.x + 1, self.y + (i / 2 * 5) as u16 + 1), b).as_str();
-            } else {
-                display += format!("{}{}", cursor::Goto(self.x + 45, self.y + (i / 2 * 5) as u16 + 1), b).as_str();
+            let x = if i % 2 == 0 {self.x + 1} else {self.x + 45};
+            let y = self.y + (i / 2 * 5) as u16 + 1;
+
+            display += format!("{}{}", cursor::Goto(x, y), b).as_str();
+
+            if self.selected.is_some_and(|x| x == i) {
+                display += format!("{}", rectangle::Rectangle{
+                    x: x - 1,
+                    y: y - 1,
+                    width: 33,
+                    height: 6
+                }).as_str();
             }
         }
 
@@ -108,8 +127,44 @@ impl fmt::Display for BusinessContainer {
 }
 
 impl BusinessContainer {
+
+    pub fn new(x: u16, y: u16, businesses: Vec<Business>) -> BusinessContainer {
+        if businesses.len() < 1 {
+            panic!("At least one business must be supplied");
+        }
+        BusinessContainer {
+            x, y, businesses,
+            selected: Some(0)
+        }
+    }
+
     pub fn iter_mut(&mut self) -> IterMut<'_, Business> {
         self.businesses.iter_mut()
+    }
+
+    pub fn select_business(&mut self, direction: BusinessSelectDirection) {
+        match direction {
+            BusinessSelectDirection::Up => {
+                if self.selected.is_some_and(|x| x > 1) {
+                    self.selected = Some(self.selected.unwrap() - 2);
+                }
+            },
+            BusinessSelectDirection::Right => {
+                if self.selected.is_some_and(|x| x % 2 == 0) {
+                    self.selected = Some(self.selected.unwrap() + 1)
+                }
+            },
+            BusinessSelectDirection::Down => {
+                if self.selected.is_some_and(|x| x < self.businesses.len() - 2) {
+                    self.selected = Some(self.selected.unwrap() + 2)
+                }
+            }
+            BusinessSelectDirection::Left => {
+                if self.selected.is_some_and(|x| x % 2 == 1) {
+                    self.selected = Some(self.selected.unwrap() - 1)
+                }
+            }
+        }
     }
 }
 
@@ -118,19 +173,66 @@ impl BusinessContainer {
 mod test {
     use std::time::Duration;
 
-    use super::Business;
+    use crate::business::BusinessSelectDirection;
+
+    use super::{Business, BusinessContainer};
 
 
     #[test]
-    fn test_progress() {
+    fn test_business_progress() {
         let mut business = Business::new("asdf".to_string(), Duration::from_millis(1500), 1.0);
 
         let mut result = business.progress(Duration::from_millis(1000));
         assert!(result.is_none());
+        assert_eq!(business.sale_progress, Duration::ZERO);
+
+        business.level = 1;
+        result = business.progress(Duration::from_millis(1000));
+        assert!(result.is_none());
         assert!(business.sale_progress > Duration::ZERO);
-        
+
         result = business.progress(Duration::from_millis(1000));
         assert!(result.is_some_and(|x| x == 1.0));
         assert_eq!(business.sale_progress, Duration::ZERO);
+    }
+
+    #[test]
+    fn test_business_container_select_business() {
+        let mut cont = BusinessContainer::new(
+            1,
+            1,
+            vec![
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0)
+            ]
+        );
+
+        assert!(cont.selected.is_some_and(|x| x == 0));
+
+        // Down
+        cont.select_business(BusinessSelectDirection::Down);
+        assert!(cont.selected.is_some_and(|x| x == 2));
+        cont.select_business(BusinessSelectDirection::Down);
+        assert!(cont.selected.is_some_and(|x| x == 2));
+
+        // Up
+        cont.select_business(BusinessSelectDirection::Up);
+        assert!(cont.selected.is_some_and(|x| x == 0));
+        cont.select_business(BusinessSelectDirection::Up);
+        assert!(cont.selected.is_some_and(|x| x == 0));
+
+        // Right
+        cont.select_business(BusinessSelectDirection::Right);
+        assert!(cont.selected.is_some_and(|x| x == 1));
+        cont.select_business(BusinessSelectDirection::Right);
+        assert!(cont.selected.is_some_and(|x| x == 1));
+
+        // Left
+        cont.select_business(BusinessSelectDirection::Left);
+        assert!(cont.selected.is_some_and(|x| x == 0));
+        cont.select_business(BusinessSelectDirection::Left);
+        assert!(cont.selected.is_some_and(|x| x == 0));
     }
 }

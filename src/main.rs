@@ -5,7 +5,7 @@ use std::io::{Read, Write, stdout};
 use std::time::Duration;
 use std::{thread, time};
 
-use business::BusinessContainer;
+use business::{BusinessContainer, BusinessSelectDirection};
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
@@ -32,26 +32,27 @@ fn main() {
     let mut account = Account::new(3, 4);
     let mut businesses = init_bussiness(4, 6);
 
-
-    write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
-    write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
-    stdout.flush().unwrap();
-
     // game loop
     let mut stdin = termion::async_stdin().bytes();
     loop {
+        // reset screen 
+        write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
+        write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
+
         match stdin.next(){
             Some(b) => {
 
                 match b.as_ref().unwrap() { // not sure why the byte queue needs Result for the possibility of an error...
                     b'q' => break,
+                    65 => businesses.select_business(BusinessSelectDirection::Up),
+                    67 => businesses.select_business(BusinessSelectDirection::Right),
+                    66 => businesses.select_business(BusinessSelectDirection::Down),
+                    68 => businesses.select_business(BusinessSelectDirection::Left),
                     _ => write!(stdout, "{}{}", cursor::Goto(1,1), b.unwrap()).unwrap()
                 }
             },
             None => ()
         }
-
-        stdout.flush().unwrap();
 
         for business in businesses.iter_mut() {
             if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
@@ -70,10 +71,10 @@ fn main() {
 }
 
 fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
-    BusinessContainer {
+    BusinessContainer::new(
         x,
         y,
-        businesses: vec! [
+        vec! [
             Business::new("Crypto Mining".to_string(), Duration::from_secs(10), 0.05),
             Business::new("Selling RAM Online".to_string(), Duration::from_secs(30), 3.0),
             Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
@@ -81,5 +82,5 @@ fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
             Business::new("Extra USB Ports".to_string(), Duration::from_secs(60 * 10), 60.0),
             Business::new("NFT Storage".to_string(), Duration::from_secs(60 * 22), 160.0),
         ]
-    }
+    )
 }
