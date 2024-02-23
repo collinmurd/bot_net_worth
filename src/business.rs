@@ -32,7 +32,8 @@ pub struct Business {
     sale_progress: Duration,
     sale_amount: f64,
 
-    level: u16
+    level: u16,
+    pub level_up_cost: f64
 }
 
 impl Business {
@@ -45,7 +46,8 @@ impl Business {
             sale_time: init_sale_time,
             sale_progress: Duration::ZERO,
             sale_amount: init_sale_amount,
-            level: 1
+            level: 1,
+            level_up_cost: 1.0
         }
     }
 
@@ -56,10 +58,14 @@ impl Business {
         self.sale_progress += time;
         if self.sale_progress > self.sale_time {
             self.sale_progress = Duration::ZERO;
-            return Some(self.sale_amount);
+            return Some(self.sale_amount * self.level as f64);
         }
 
         return None;
+    }
+
+    pub fn upgrade(&mut self) {
+        self.level += 1;
     }
 
     fn progress_bar(&self) -> String {
@@ -82,7 +88,7 @@ impl fmt::Display for Business {
             remaining % 60
         );
 
-        let level_line = format!("Level: {} Revenue: ${:.2}", self.level, self.sale_amount);
+        let level_line = format!("Level: {} Revenue: ${:.2}", self.level, self.sale_amount * self.level as f64);
         write!(f, "{}\n{}{}\n{}[{:<20}]{}",
             self.name,
             cursor::Left(self.name.len() as u16),
@@ -165,6 +171,13 @@ impl BusinessContainer {
                 }
             }
         }
+    }
+
+    pub fn get_mut_selected_business(&mut self) -> Option<&mut Business> {
+        if self.selected.is_some() {
+            return Some(self.businesses.get_mut(self.selected.unwrap()).unwrap());
+        }
+        return None;
     }
 }
 

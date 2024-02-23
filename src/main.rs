@@ -18,7 +18,7 @@ use crate::business::Business;
 use crate::shapes::{rectangle, text};
 
 const GAME_WIDTH: u16 = 100;
-const GAME_HEIGHT: u16 = 25;
+const GAME_HEIGHT: u16 = 30;
 const FPS: u16 = 30;
 
 fn main() {
@@ -44,13 +44,22 @@ fn main() {
         match buf.pop() {
             Some(b) => {
 
-                match b { // not sure why the byte queue needs Result for the possibility of an error...
+                match b {
+                    // exit
                     b'q' => break,
+
+                    // menu
+                    49 => match businesses.get_mut_selected_business() {
+                        Some(business) => upgrade_business(&mut account, business),
+                        None => ()
+                    },
+
+                    // select businesses
                     65 => businesses.select_business(BusinessSelectDirection::Up),
                     67 => businesses.select_business(BusinessSelectDirection::Right),
                     66 => businesses.select_business(BusinessSelectDirection::Down),
                     68 => businesses.select_business(BusinessSelectDirection::Left),
-                    _ => ()
+                    _ => write!(stdout, "{}{}", cursor::Goto(1,1), b).unwrap()
                 }
             },
             None => ()
@@ -85,4 +94,11 @@ fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
             Business::new("NFT Storage".to_string(), Duration::from_secs(60 * 22), 160.0),
         ]
     )
+}
+
+fn upgrade_business(account: &mut Account, business: &mut Business) {
+    if business.level_up_cost < account.cash() {
+        account.spend(business.level_up_cost);
+        business.upgrade();
+    }
 }

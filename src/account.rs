@@ -20,6 +20,10 @@ impl Account {
     pub fn spend(&mut self, amount: f64) {
         self.cash -= amount;
     }
+
+    pub fn cash(&self) -> f64 {
+        self.cash
+    }
 }
 
 impl fmt::Display for Account {
