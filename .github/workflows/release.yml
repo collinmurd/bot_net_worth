@@ -37,9 +37,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bot_net_worth-${{ inputs.release_version }}
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: ${{inputs.release_version }}
-          draft: true
-          artifacts: ${{ steps.download-artifact.download-path }}
+      - name: Create Release
+        run: |
+          gh release create --draft ${{ inputs.release_version }} ${{ steps.download-artifact.download-location }}
 
