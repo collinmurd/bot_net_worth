@@ -38,6 +38,8 @@ jobs:
         with:
           name: bot_net_worth-${{ inputs.release_version }}
       - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create --draft ${{ inputs.release_version }} ${{ steps.download-artifact.download-location }}
 
