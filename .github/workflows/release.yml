@@ -33,12 +33,13 @@ jobs:
     needs: [build]
 
     steps:
-      - uses: actions/download-artifact@v4
+      - id: download-artifact
+        uses: actions/download-artifact@v4
         with:
           name: bot_net_worth-${{ inputs.release_version }}
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{inputs.release_version }}
           draft: true
-          artifacts: bot_net_worth-${{ inputs.release_version }}
+          artifacts: ${{ steps.download-artifact.download-path }}
 
