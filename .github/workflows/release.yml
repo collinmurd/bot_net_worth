@@ -42,5 +42,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create --draft ${{ inputs.release_version }} ${{ steps.download-artifact.download-location }}
+          gh release create --draft ${{ inputs.release_version }} ${{ steps.download-artifact.download-path }}
 
