@@ -35,6 +35,8 @@ fn main() {
     let mut businesses = init_bussiness(4, 6);
     let mut menu = Menu::new(3, 24, vec![]);
 
+    let mut business_changed = true;
+
     // game loop
     let mut stdin = termion::async_stdin();
     loop {
@@ -42,7 +44,6 @@ fn main() {
         write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
         write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
 
-        let mut business_changed = false;
 
         let mut buf: Vec<u8> = Vec::new();
         stdin.read_to_end(&mut buf).unwrap();
@@ -89,10 +90,11 @@ fn main() {
         if business_changed {
             if let Some(b) = businesses.get_mut_selected_business() {
                 menu.clear_options();
-                menu.add_option(format!("Upgrade for {:.2}", b.level_up_cost));
+                menu.add_option(format!("Upgrade for ${:.2}", b.level_up_cost));
             }
         }
         write!(stdout, "{}", menu).unwrap();
+        business_changed = false;
 
         stdout.flush().unwrap();
 
