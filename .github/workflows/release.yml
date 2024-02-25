@@ -38,9 +38,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bot_net_worth-${{ inputs.release_version }}
+      - run: |
+          tar -cvf bot_net_worth-${{ inputs.release_version }}.tgz ${{ steps.download-artifact.outputs.download-path }}
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create --draft ${{ inputs.release_version }} ${{ steps.download-artifact.download-path }}
+          gh release create --draft ${{ inputs.release_version }} bot_net_worth-${{ inputs.release_version }}.tgz
 
