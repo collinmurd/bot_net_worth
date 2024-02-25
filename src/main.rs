@@ -108,12 +108,12 @@ fn init_bussiness(x: u16, y: u16) -> BusinessContainer {
         x,
         y,
         vec! [
-            Business::new("Crypto Mining".to_string(), Duration::from_secs(10), 0.05),
-            Business::new("Selling RAM Online".to_string(), Duration::from_secs(30), 3.0),
-            Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
-            Business::new("Floppy Discs".to_string(), Duration::from_secs(60 * 3), 25.0),
-            Business::new("Extra USB Ports".to_string(), Duration::from_secs(60 * 10), 60.0),
-            Business::new("NFT Storage".to_string(), Duration::from_secs(60 * 22), 160.0),
+            Business::new("Crypto Mining".to_string(), Duration::from_secs(10), 0.05, 1.0),
+            Business::new("Selling RAM Online".to_string(), Duration::from_secs(30), 3.0, 60.0),
+            Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0, 140.0),
+            Business::new("Floppy Discs".to_string(), Duration::from_secs(60 * 3), 25.0, 400.0),
+            Business::new("Extra USB Ports".to_string(), Duration::from_secs(60 * 10), 60.0, 1200.0),
+            Business::new("NFT Storage".to_string(), Duration::from_secs(60 * 22), 160.0, 3200.0),
         ]
     )
 }

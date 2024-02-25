@@ -39,7 +39,8 @@ pub struct Business {
 impl Business {
     pub fn new(name: String,
                init_sale_time: Duration,
-               init_sale_amount: f64
+               init_sale_amount: f64,
+               level_up_cost: f64
     ) -> Business {
         Business {
             name,
@@ -47,7 +48,7 @@ impl Business {
             sale_progress: Duration::ZERO,
             sale_amount: init_sale_amount,
             level: 1,
-            level_up_cost: 1.0
+            level_up_cost
         }
     }
 
@@ -193,9 +194,9 @@ mod test {
 
     #[test]
     fn test_business_progress() {
-        let mut business = Business::new("asdf".to_string(), Duration::from_millis(1500), 1.0);
+        let mut business = Business::new("asdf".to_string(), Duration::from_millis(1500), 1.0, 1.0);
 
-        let mut result = business.progress(Duration::from_millis(1000));
+        let mut result = business.progress(Duration::ZERO);
         assert!(result.is_none());
         assert_eq!(business.sale_progress, Duration::ZERO);
 
@@ -215,10 +216,10 @@ mod test {
             1,
             1,
             vec![
-                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
-                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
-                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0),
-                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0)
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0, 1.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0, 1.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0, 1.0),
+                Business::new("Antivirus Software".to_string(), Duration::from_secs(60), 7.0, 1.0)
             ]
         );
 
