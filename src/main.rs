@@ -6,12 +6,14 @@ use std::time::Duration;
 use std::{thread, time};
 
 use business::{BusinessContainer, BusinessSelectDirection};
+use menu::Menu;
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
 mod account;
 mod business;
 mod shapes;
+mod menu;
 
 use crate::account::Account;
 use crate::business::Business;
@@ -31,6 +33,7 @@ fn main() {
     let title = text::Text { x: 3, y: 3, content: "Bot Net Worth".to_string()};
     let mut account = Account::new(3, 4);
     let mut businesses = init_bussiness(4, 6);
+    let mut menu = Menu::new(3, 24, vec![]);
 
     // game loop
     let mut stdin = termion::async_stdin();
@@ -38,6 +41,8 @@ fn main() {
         // reset screen 
         write!(stdout, "{}{}{}{}", clear::All, game_border, title, account).unwrap();
         write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
+
+        let mut business_changed = false;
 
         let mut buf: Vec<u8> = Vec::new();
         stdin.read_to_end(&mut buf).unwrap();
@@ -55,16 +60,23 @@ fn main() {
                     },
 
                     // select businesses
-                    65 => businesses.select_business(BusinessSelectDirection::Up),
-                    67 => businesses.select_business(BusinessSelectDirection::Right),
-                    66 => businesses.select_business(BusinessSelectDirection::Down),
-                    68 => businesses.select_business(BusinessSelectDirection::Left),
+                    65..=68 => {
+                        business_changed = true;
+                        match b {
+                            65 => businesses.select_business(BusinessSelectDirection::Up),
+                            67 => businesses.select_business(BusinessSelectDirection::Right),
+                            66 => businesses.select_business(BusinessSelectDirection::Down),
+                            68 => businesses.select_business(BusinessSelectDirection::Left),
+                            _ => ()
+                        }
+                    },
                     _ => write!(stdout, "{}{}", cursor::Goto(1,1), b).unwrap()
                 }
             },
             None => ()
         }
 
+        // display businesses
         for business in businesses.iter_mut() {
             if let Some(amount) = business.progress(Duration::from_secs_f32(1.0 / FPS as f32)) {
                 account.earn(amount);
@@ -72,6 +84,16 @@ fn main() {
             }
         }
         write!(stdout, "{}{}", cursor::Goto(3, 6), businesses).unwrap();
+
+        // display menu
+        if business_changed {
+            if let Some(b) = businesses.get_mut_selected_business() {
+                menu.clear_options();
+                menu.add_option(format!("Upgrade for {:.2}", b.level_up_cost));
+            }
+        }
+        write!(stdout, "{}", menu).unwrap();
+
         stdout.flush().unwrap();
 
         thread::sleep(time::Duration::from_secs_f32(1.0 / FPS as f32));
