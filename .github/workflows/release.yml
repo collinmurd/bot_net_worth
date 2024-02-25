@@ -5,6 +5,8 @@ on:
     inputs:
       release_version:
         required: true
+permissions:
+  contents: write
 
 env:
   CARGO_TERM_COLOR: always
